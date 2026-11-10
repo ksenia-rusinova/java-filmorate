@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,8 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
     private final Map<Long, Film> films = new HashMap<>();
+    private static final LocalDate FIRST_RELEASE_DATE =
+            LocalDate.of(1895, 12, 28);
 
     @GetMapping
     public Collection<Film> getFilms() {
@@ -19,6 +23,11 @@ public class FilmController {
 
     @PostMapping
     public Film postFilm(@RequestBody Film film) {
+        nameEx(film);
+        descriptionEx(film);
+        releaseDateEx(film);
+        durationEx(film);
+
         film.setId(getNextId());
         films.put(film.getId(), film);
         return film;
@@ -26,10 +35,14 @@ public class FilmController {
 
     @PutMapping
     public Film putFilm(@RequestBody Film film) {
+        nameEx(film);
+        descriptionEx(film);
+        releaseDateEx(film);
+        durationEx(film);
+
         if(films.containsKey(film.getId())){
             films.put(film.getId(), film);
         }
-
         return film;
     }
 
@@ -40,5 +53,37 @@ public class FilmController {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    private void nameEx(Film film) {
+        if(film.getName() == null
+                || film.getName().isBlank()){
+            throw new ValidationException("Название фильма НЕ может быть пустым");
+        }
+    }
+
+    private void descriptionEx(Film film) {
+        if(film.getDescription() != null
+                && film.getDescription().length() > 200){
+            throw new ValidationException("Максимальная длина описания 200 символов");
+        }
+    }
+
+    private void releaseDateEx(Film film) {
+        if (film.getReleaseDate() != null
+                && film.getReleaseDate().isBefore(FIRST_RELEASE_DATE)) {
+            throw new ValidationException(
+                    "Дата релиза не может быть раньше 28 декабря 1895 года"
+            );
+        }
+    }
+
+    private void durationEx(Film film) {
+        if (film.getDuration() != null
+                && film.getDuration() <= 0) {
+            throw new ValidationException(
+                    "Продолжительность фильма должна != 0 и быть положительным числом"
+            );
+        }
     }
 }
