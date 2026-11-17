@@ -10,10 +10,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(
-            ValidationException ex) {
-        return ResponseEntity
-                .badRequest()
-                .body(Map.of("message", ex.getMessage()));
+    public ResponseEntity<Map<String, String>> handleValidationException(ValidationException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(Map.of("message", ex.getMessage()));
     }
 }

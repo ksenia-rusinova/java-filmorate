@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -45,13 +46,14 @@ public class UserController {
         loginEx(user);
         birthdayEx(user);
 
-        if (users.containsKey(user.getId())) {
+        if (user.getId() != null && users.containsKey(user.getId())) {
             checkIfUserNameEqNull(user);
 
             users.put(user.getId(), user);
             log.info("user обновлен в HashMap users по id = {}", user.getId());
         } else {
             log.error("user НЕ найден в HashMap users по id = {}", user.getId());
+            throw new ValidationException(HttpStatus.NOT_FOUND, "id = null или НЕ найден в HashMap users");
         }
 
         return user;
@@ -65,14 +67,14 @@ public class UserController {
     private void emailEx(User user) {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.warn("Электронная почта = {}, сгенерировано исключение ValidationException", user.getEmail());
-            throw new ValidationException("Электронная почта НЕ может быть пустой и должна содержать символ @");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "Электронная почта НЕ может быть пустой и должна содержать символ @");
         }
     }
 
     private void loginEx(User user) {
         if (user.getLogin() == null || user.getLogin().isBlank()) {
             log.warn("Логин = {}, сгенерировано исключение ValidationException", user.getLogin());
-            throw new ValidationException("Логин НЕ может быть пустым и содержать пробелы");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "Логин НЕ может быть пустым и содержать пробелы");
         }
     }
 
@@ -86,7 +88,7 @@ public class UserController {
     private void birthdayEx(User user) {
         if (user.getBirthday() != null && user.getBirthday().isAfter(TODAY)) {
             log.warn("Дата рождения = {}, сгенерировано исключение ValidationException", user.getBirthday());
-            throw new ValidationException("Дата рождения не может быть в будущем");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "Дата рождения не может быть в будущем");
         }
     }
 }
