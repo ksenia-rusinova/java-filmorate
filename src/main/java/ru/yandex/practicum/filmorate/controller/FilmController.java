@@ -46,7 +46,7 @@ public class FilmController {
         releaseDateEx(film);
         durationEx(film);
 
-        if(films.containsKey(film.getId())){
+        if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("film обновлен в HashMap films по id = {}", film.getId());
         } else {
@@ -66,16 +66,16 @@ public class FilmController {
     }
 
     private void nameEx(Film film) {
-        if(film.getName() == null
-                || film.getName().isBlank()){
+        if (film.getName() == null
+                || film.getName().isBlank()) {
             log.warn("Название фильма = {}, сгенерировано исключение ValidationException", film.getName());
             throw new ValidationException("Название фильма НЕ может быть пустым");
         }
     }
 
     private void descriptionEx(Film film) {
-        if(film.getDescription() != null
-                && film.getDescription().length() > 200){
+        if (film.getDescription() != null
+                && film.getDescription().length() > 200) {
             log.warn("Описание = {}, сгенерировано исключение ValidationException", film.getDescription());
             throw new ValidationException("Максимальная длина описания 200 символов");
         }

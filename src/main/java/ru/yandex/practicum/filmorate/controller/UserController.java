@@ -58,41 +58,33 @@ public class UserController {
     }
 
     private Long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
+        long currentMaxId = users.keySet().stream().mapToLong(id -> id).max().orElse(0);
         return ++currentMaxId;
     }
 
     private void emailEx(User user) {
-        if (user.getEmail() == null
-                || !user.getEmail().contains("@")) {
+        if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.warn("Электронная почта = {}, сгенерировано исключение ValidationException", user.getEmail());
             throw new ValidationException("Электронная почта НЕ может быть пустой и должна содержать символ @");
         }
     }
 
     private void loginEx(User user) {
-        if (user.getLogin() == null
-                || user.getLogin().isBlank()) {
+        if (user.getLogin() == null || user.getLogin().isBlank()) {
             log.warn("Логин = {}, сгенерировано исключение ValidationException", user.getLogin());
             throw new ValidationException("Логин НЕ может быть пустым и содержать пробелы");
         }
     }
 
     private void checkIfUserNameEqNull(User user) {
-        if (user.getName() == null
-                || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("если name = null или состоит из пробелов, в поле name записали значение из поля login = {}", user.getLogin());
         }
     }
 
     private void birthdayEx(User user) {
-        if (user.getBirthday() != null
-                && user.getBirthday().isAfter(TODAY)) {
+        if (user.getBirthday() != null && user.getBirthday().isAfter(TODAY)) {
             log.warn("Дата рождения = {}, сгенерировано исключение ValidationException", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
         }

@@ -29,9 +29,7 @@ public class FilmControllerTests {
         film.setReleaseDate(LocalDate.of(1900, 3, 25));
         film.setDuration(200);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.postFilm(film));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.postFilm(film));
 
         assertEquals("Название фильма НЕ может быть пустым", exception.getMessage());
     }
@@ -45,9 +43,7 @@ public class FilmControllerTests {
         film.setReleaseDate(LocalDate.of(1900, 3, 25));
         film.setDuration(200);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.postFilm(film));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.postFilm(film));
 
         assertEquals("Максимальная длина описания 200 символов", exception.getMessage());
     }
@@ -79,9 +75,7 @@ public class FilmControllerTests {
         film.setReleaseDate(LocalDate.of(1895, 12, 27));
         film.setDuration(200);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.postFilm(film));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.postFilm(film));
 
         assertEquals("Дата релиза не может быть раньше 28 декабря 1895 года", exception.getMessage());
     }
@@ -113,9 +107,7 @@ public class FilmControllerTests {
         film.setReleaseDate(LocalDate.of(1967, 3, 25));
         film.setDuration(0);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.postFilm(film));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.postFilm(film));
 
         assertEquals("Продолжительность фильма должна != 0 и быть положительным числом", exception.getMessage());
     }
@@ -129,9 +121,7 @@ public class FilmControllerTests {
         film.setReleaseDate(LocalDate.of(1967, 3, 25));
         film.setDuration(-1);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.postFilm(film));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.postFilm(film));
 
         assertEquals("Продолжительность фильма должна != 0 и быть положительным числом", exception.getMessage());
     }
@@ -175,9 +165,7 @@ public class FilmControllerTests {
         anotherFilm.setReleaseDate(LocalDate.of(1901, 3, 25));
         anotherFilm.setDuration(20);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.putFilm(anotherFilm));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.putFilm(anotherFilm));
 
         assertEquals("Название фильма НЕ может быть пустым", exception.getMessage());
     }
@@ -201,9 +189,7 @@ public class FilmControllerTests {
         anotherFilm.setReleaseDate(LocalDate.of(1901, 3, 25));
         anotherFilm.setDuration(20);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.putFilm(anotherFilm));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.putFilm(anotherFilm));
 
         assertEquals("Максимальная длина описания 200 символов", exception.getMessage());
     }
@@ -255,9 +241,7 @@ public class FilmControllerTests {
         anotherFilm.setReleaseDate(LocalDate.of(1895, 12, 27));
         anotherFilm.setDuration(20);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.putFilm(anotherFilm));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.putFilm(anotherFilm));
 
         assertEquals("Дата релиза не может быть раньше 28 декабря 1895 года", exception.getMessage());
     }
@@ -309,9 +293,7 @@ public class FilmControllerTests {
         anotherFilm.setReleaseDate(LocalDate.of(1967, 3, 25));
         anotherFilm.setDuration(0);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.putFilm(anotherFilm));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.putFilm(anotherFilm));
 
         assertEquals("Продолжительность фильма должна != 0 и быть положительным числом", exception.getMessage());
     }
@@ -335,9 +317,7 @@ public class FilmControllerTests {
         anotherFilm.setReleaseDate(LocalDate.of(1967, 3, 25));
         anotherFilm.setDuration(-1);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.putFilm(anotherFilm));
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.putFilm(anotherFilm));
 
         assertEquals("Продолжительность фильма должна != 0 и быть положительным числом", exception.getMessage());
     }
