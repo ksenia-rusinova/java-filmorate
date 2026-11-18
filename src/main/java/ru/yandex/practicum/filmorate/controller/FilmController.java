@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -12,13 +11,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-
     private final Map<Long, Film> films = new HashMap<>();
     private static final LocalDate FIRST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private long nextId = 1;
 
     @GetMapping
     public Collection<Film> getFilms() {
@@ -27,63 +26,46 @@ public class FilmController {
 
     @PostMapping
     public Film postFilm(@RequestBody Film film) {
-        nameEx(film);
-        descriptionEx(film);
-        releaseDateEx(film);
-        durationEx(film);
-
+        validate(film);
         film.setId(getNextId());
         films.put(film.getId(), film);
         log.info("film добавлен в HashMap films, id = {}", film.getId());
-
         return film;
     }
 
     @PutMapping
     public Film putFilm(@RequestBody Film film) {
-        nameEx(film);
-        descriptionEx(film);
-        releaseDateEx(film);
-        durationEx(film);
-
-        if (film.getId() != null && films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("film обновлен в HashMap films по id = {}", film.getId());
-        } else {
+        if (film.getId() == null || !films.containsKey(film.getId())) {
             log.error("film НЕ найден в HashMap films по id = {}", film.getId());
             throw new ValidationException(HttpStatus.NOT_FOUND, "id = null или НЕ найден в HashMap films");
         }
 
+        validate(film);
+        films.put(film.getId(), film);
+        log.info("film обновлен в HashMap films по id = {}", film.getId());
         return film;
     }
 
     private Long getNextId() {
-        long currentMaxId = films.keySet().stream().mapToLong(id -> id).max().orElse(0);
-        return ++currentMaxId;
+        return nextId++;
     }
 
-    private void nameEx(Film film) {
+    private void validate(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             log.warn("Название фильма = {}, сгенерировано исключение ValidationException", film.getName());
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Название фильма НЕ может быть пустым");
         }
-    }
 
-    private void descriptionEx(Film film) {
         if (film.getDescription() != null && film.getDescription().length() > 200) {
             log.warn("Описание = {}, сгенерировано исключение ValidationException", film.getDescription());
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Максимальная длина описания 200 символов");
         }
-    }
 
-    private void releaseDateEx(Film film) {
         if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(FIRST_RELEASE_DATE)) {
             log.warn("Дата релиза = {}, сгенерировано исключение ValidationException", film.getReleaseDate());
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Дата релиза не может быть раньше 28 декабря 1895 года");
         }
-    }
 
-    private void durationEx(Film film) {
         if (film.getDuration() != null && film.getDuration() <= 0) {
             log.warn("Продолжительность фильма = {}, сгенерировано исключение ValidationException", film.getDuration());
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Продолжительность фильма должна != 0 и быть положительным числом");
